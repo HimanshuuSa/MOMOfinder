@@ -1,0 +1,116 @@
+import requests
+import dns.resolver
+import subprocess
+
+class SubdomainEnumerator:
+    def __init__(self, domain):
+        self.domain = domain
+        self.subdomains = set()
+        self.common_subdomains = [
+            "www", "mail", "ftp", "webmail", "admin", "test", "dev", "api", "blog", "shop", "secure", "m", "static"
+        ]
+
+    def display_logo(self):
+        logo = r"""
+        ███╗   ██╗ ██████╗  ███╗   ██╗ ███████╗ ██████╗ ██╗   ██╗██╗
+        ████╗  ██║██╔═══██╗ ████╗  ██║ ██╔════╝██╔═══██╗██║   ██║██║
+        ██╔██╗ ██║██║   ██║ ██╔██╗ ██║ █████╗  ██║   ██║██║   ██║██║
+        ██║╚██╗██║██║   ██║ ██║╚██╗██║ ██╔══╝  ██║   ██║██║   ██║██║
+        ██║ ╚████║ ╚██████╔╝ ██║ ╚████║ ███████╗ ╚██████╔╝╚██████╔╝██║
+        ╚═╝  ╚═══╝  ╚═════╝  ╚═╝  ╚═══╝ ╚══════╝  ╚═════╝  ╚═════╝ ╚═╝
+        """
+        print("\033[1m" + logo + "\033[0m")  # Print in bold
+        print("\033[1mMOMOfinder\033[0m")  # Display MOMOfinder in bold
+
+    def install_dependencies(self):
+        print("[*] Checking and installing required tools...")
+        tools = [
+            "curl", "awk", "sort", "tr", "grep", "sed", "findomain", "amass"
+        ]
+
+        # Install essential tools
+        for tool in tools:
+            if subprocess.call(["which", tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
+                print(f"[*] Installing {tool}...")
+                subprocess.call(["sudo", "apt", "install", "-y", tool])
+
+        # Install Go tools
+        go_tools = ["subfinder", "assetfinder"]
+        for go_tool in go_tools:
+            if subprocess.call(["which", go_tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
+                print(f"[*] Installing {go_tool}...")
+                subprocess.call(["go", "get", "-u", f"github.com/tomnomnom/{go_tool}"])
+
+    def generate_subdomains(self):
+        for sub in self.common_subdomains:
+            self.subdomains.add(f"{sub}.{self.domain}")
+
+    def web_archive(self):
+        print("[*] Querying Web Archive...")
+        try:
+            response = requests.get(f"http://web.archive.org/cdx/search/cdx?url=*.{self.domain}&output=json&fl=original&collapse=urlkey")
+            data = response.json()
+            for entry in data[1:]:  # Skip the header
+                subdomain = entry[0]
+                self.subdomains.add(subdomain)
+        except Exception as e:
+            print(f"Error querying Web Archive: {e}")
+
+    def crt_sh(self):
+        print("[*] Querying CRT.SH...")
+        try:
+            response = requests.get(f"https://crt.sh/?q=%25.{self.domain}&output=json")
+            data = response.json()
+            for entry in data:
+                subdomain = entry['name_value']
+                self.subdomains.add(subdomain)
+        except Exception as e:
+            print(f"Error querying CRT.SH: {e}")
+
+    def dns_bufferover(self):
+        print("[*] Querying DNS Bufferover...")
+        try:
+            response = requests.get(f"https://dns.bufferover.run/dns?q={self.domain}")
+            data = response.json()
+            for entry in data['FDNS_A']:
+                subdomain = entry['name']
+                self.subdomains.add(subdomain)
+        except Exception as e:
+            print(f"Error querying DNS Bufferover: {e}")
+
+    def findomain(self):
+        print("[*] Running Findomain...")
+        try:
+            result = subprocess.run(['findomain', '-t', self.domain], capture_output=True, text=True)
+            for line in result.stdout.splitlines():
+                self.subdomains.add(line.strip())
+        except Exception as e:
+            print(f"Error running Findomain: { e}")
+
+    def amass(self):
+        print("[*] Running Amass...")
+        try:
+            result = subprocess.run(['amass', 'enum', '-d', self.domain], capture_output=True, text=True)
+            for line in result.stdout.splitlines():
+                self.subdomains.add(line.strip())
+        except Exception as e:
+            print(f"Error running Amass: {e}")
+
+    def run(self):
+        self.display_logo()
+        self.install_dependencies()
+        self.generate_subdomains()
+        self.web_archive()
+        self.crt_sh()
+        self.dns_bufferover()
+        self.findomain()
+        self.amass()
+        print("[*] Subdomain enumeration complete.")
+        print("[*] Found subdomains:")
+        for subdomain in sorted(self.subdomains):
+            print(subdomain)
+
+if __name__ == "__main__":
+    domain = input("Enter the domain to enumerate subdomains: ")
+    enumerator = SubdomainEnumerator(domain)
+    enumerator.run()
