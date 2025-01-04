@@ -12,14 +12,36 @@ Momofinder is an advanced subdomain enumeration tool designed for security profe
 
 # Installation
 
-To install Momofinder, simply execute the provided installer script:
+**Step-by-Step Guide to Create and Run the MOMOfinder Script**
+Step 1: Open a Terminal
 
-# bash
+Open your terminal application.
+Step 2: Create the Python File
 
-./install.sh
+    Use nano (or any text editor of your choice) to create a new Python file.
 
-The installer script will automatically check for and install any necessary dependencies. Once the installation is complete, you can run the tool using the momofinder command.
-Usage
+Step 3: Paste the Code
+
+    Copy the entire code of the MOMOfinder script.
+    In the nano editor, paste the code.
+
+Step 4: Save the File
+
+    To save the file in nano, press Ctrl + O, then hit Enter to confirm the filename.
+    Exit nano by pressing Ctrl + X.
+
+Step 5: Make the Script Executable
+
+    Change the permissions of the script to make it executable.
+
+Step 6: Run the Script
+
+    Execute the script using Python.
+    When prompted, enter the domain you want to enumerate subdomains for.
+
+Conclusion
+
+You have successfully created, saved, and executed the MOMOfinder script. You can now use it to find subdomains for any specified domain.
 
 
 
