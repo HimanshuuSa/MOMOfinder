@@ -10,18 +10,6 @@ class SubdomainEnumerator:
             "www", "mail", "ftp", "webmail", "admin", "test", "dev", "api", "blog", "shop", "secure", "m", "static"
         ]
 
-    def display_logo(self):
-        logo = r"""
-        ███╗   ██╗ ██████╗  ███╗   ██╗ ███████╗ ██████╗ ██╗   ██╗██╗
-        ████╗  ██║██╔═══██╗ ████╗  ██║ ██╔════╝██╔═══██╗██║   ██║██║
-        ██╔██╗ ██║██║   ██║ ██╔██╗ ██║ █████╗  ██║   ██║██║   ██║██║
-        ██║╚██╗██║██║   ██║ ██║╚██╗██║ ██╔══╝  ██║   ██║██║   ██║██║
-        ██║ ╚████║ ╚██████╔╝ ██║ ╚████║ ███████╗ ╚██████╔╝╚██████╔╝██║
-        ╚═╝  ╚═══╝  ╚═════╝  ╚═╝  ╚═══╝ ╚══════╝  ╚═════╝  ╚═════╝ ╚═╝
-        """
-        print("\033[1m" + logo + "\033[0m")  # Print in bold
-        print("\033[1mMOMOfinder\033[0m")  # Display MOMOfinder in bold
-
     def install_dependencies(self):
         print("[*] Checking and installing required tools...")
         tools = [
@@ -97,7 +85,6 @@ class SubdomainEnumerator:
             print(f"Error running Amass: {e}")
 
     def run(self):
-        self.display_logo()
         self.install_dependencies()
         self.generate_subdomains()
         self.web_archive()
