@@ -8,8 +8,7 @@ Momofinder is an advanced subdomain enumeration tool designed for security profe
    # Intuitive Command-Line Interface:
    # Easy to navigate and use for both beginners and experienced users
 
-   # Rapid and Efficient Discovery:
-      # Optimized for speed, allowing for quick results even with large target domains
+   # Rapid and Efficient Discovery: Optimized for speed, allowing for quick results even with large target domains
 
 # Installation
 
